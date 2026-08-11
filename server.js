@@ -327,6 +327,16 @@ io.on('connection', (socket) => {
   
   // Skip/Next - Leave current room and find new match
   socket.on('skip', () => {
+    // Remove from matching queue if waiting
+    for (const countryKey in matchingQueue) {
+      const queueIndex = matchingQueue[countryKey].findIndex(u => u.userId === socket.userId);
+      if (queueIndex !== -1) {
+        matchingQueue[countryKey].splice(queueIndex, 1);
+        console.log(`Removed ${socket.username} from ${countryKey} queue`);
+      }
+    }
+
+    // Leave room if in one
     if (socket.currentRoom) {
       const roomId = socket.currentRoom;
       socket.to(roomId).emit('partner_skipped');
