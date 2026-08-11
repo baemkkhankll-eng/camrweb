@@ -321,6 +321,13 @@ function initializeSocket() {
         findMatchBtn.disabled = true;
         waitingOverlay.classList.remove('hidden');
     });
+
+    socket.on('error', (message) => {
+        console.error('Socket error:', message);
+        statusMessage.textContent = message;
+        findMatchBtn.disabled = false;
+        waitingOverlay.classList.add('hidden');
+    });
     
     socket.on('match_found', ({ roomId, partnerUsername }) => {
         currentRoom = roomId;
@@ -427,13 +434,19 @@ async function startWebRTC() {
             audio: settings.audioEnabled
         };
 
+        console.log('Requesting media with constraints:', mediaConstraints);
+
         // If both are disabled, still create connection without media
         if (!settings.videoEnabled && !settings.audioEnabled) {
             localStream = new MediaStream();
             localMediaState = { video: false, audio: false };
+            console.log('No media requested, using empty stream');
         } else {
             try {
                 localStream = await navigator.mediaDevices.getUserMedia(mediaConstraints);
+                console.log('Got local stream:', localStream);
+                console.log('Video tracks:', localStream.getVideoTracks().length);
+                console.log('Audio tracks:', localStream.getAudioTracks().length);
                 localMediaState = {
                     video: settings.videoEnabled && localStream.getVideoTracks().length > 0,
                     audio: settings.audioEnabled && localStream.getAudioTracks().length > 0
@@ -460,6 +473,10 @@ async function startWebRTC() {
         }
 
         localVideo.srcObject = localStream;
+        localVideo.onloadedmetadata = () => {
+            console.log('Local video metadata loaded');
+            localVideo.play().catch(e => console.error('Error playing video:', e));
+        };
         updateLocalMediaStatus();
 
         // Create peer connection
@@ -474,6 +491,9 @@ async function startWebRTC() {
         peerConnection.ontrack = (event) => {
             if (event.streams && event.streams[0]) {
                 remoteVideo.srcObject = event.streams[0];
+                remoteVideo.onloadedmetadata = () => {
+                    remoteVideo.play().catch(e => console.error('Error playing remote video:', e));
+                };
             }
         };
 
@@ -542,10 +562,9 @@ function stopLocalStream() {
 // ==================== Matching ====================
 
 findMatchBtn.addEventListener('click', () => {
-    if (socket) {
-        selectedCountry = countrySelect.value;
-        localStorage.setItem('selectedCountry', selectedCountry);
+    if (socket && !findMatchBtn.disabled) {
         socket.emit('find_match', { country: selectedCountry });
+        findMatchBtn.disabled = true;
     }
 });
 
