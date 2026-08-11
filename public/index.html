@@ -1,0 +1,272 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>OmeTV - Random Video Chat</title>
+    <link rel="stylesheet" href="style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <!-- Login/Register Page -->
+    <div id="auth-page" class="page">
+        <div class="auth-background"></div>
+        <div class="auth-container">
+            <div class="logo-section">
+                <div class="logo-icon">
+                    <i class="fas fa-globe"></i>
+                </div>
+                <h1>OmeTV</h1>
+                <p>คุยกับคนทั่วโลกแบบสุ่ม</p>
+            </div>
+            
+            <div class="auth-form">
+                <div class="tabs">
+                    <button class="tab-btn active" data-tab="login">เข้าสู่ระบบ</button>
+                    <button class="tab-btn" data-tab="register">สมัครสมาชิก</button>
+                </div>
+                
+                <!-- Login Form -->
+                <form id="login-form" class="form-content active">
+                    <div class="input-group">
+                        <input type="text" id="login-username" placeholder="ชื่อผู้ใช้" required>
+                        <span class="input-icon"><i class="fas fa-user"></i></span>
+                    </div>
+                    <div class="input-group">
+                        <input type="password" id="login-password" placeholder="รหัสผ่าน" required>
+                        <span class="input-icon"><i class="fas fa-lock"></i></span>
+                    </div>
+                    <button type="submit" class="btn-primary">เข้าสู่ระบบ</button>
+                </form>
+                
+                <!-- Register Form -->
+                <form id="register-form" class="form-content">
+                    <div class="input-group">
+                        <input type="text" id="register-username" placeholder="ชื่อผู้ใช้" required>
+                        <span class="input-icon"><i class="fas fa-user"></i></span>
+                    </div>
+                    <div class="input-group">
+                        <input type="password" id="register-password" placeholder="รหัสผ่าน" required>
+                        <span class="input-icon"><i class="fas fa-lock"></i></span>
+                    </div>
+                    <div class="profile-upload-section">
+                        <div class="profile-upload" id="profile-upload">
+                            <div class="upload-placeholder">
+                                <span class="upload-icon"><i class="fas fa-camera"></i></span>
+                                <span class="upload-text">เพิ่มรูปโปรไฟล์</span>
+                            </div>
+                            <img id="profile-preview" class="profile-preview hidden" alt="Profile">
+                        </div>
+                        <input type="file" id="profile-input" accept="image/*" class="hidden">
+                    </div>
+                    <button type="submit" class="btn-primary">สมัครสมาชิก</button>
+                </form>
+                
+                <div id="auth-error" class="error-message"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Video Chat Page -->
+    <div id="chat-page" class="page hidden">
+        <div class="chat-background"></div>
+        <div class="chat-container">
+            <!-- Header -->
+            <div class="header">
+                <div class="header-left">
+                    <div class="logo-small">
+                        <i class="fas fa-globe"></i>
+                    </div>
+                    <h1>OmeTV</h1>
+                </div>
+                <div class="user-info">
+                    <div class="country-selector">
+                        <select id="country-select">
+                            <option value="all">🌍 ทั่วโลก</option>
+                            <option value="TH">🇹🇭 ไทย</option>
+                            <option value="US">🇺🇸 สหรัฐอเมริกา</option>
+                            <option value="GB">🇬🇧 สหราชอาณาจักร</option>
+                            <option value="JP">🇯🇵 ญี่ปุ่น</option>
+                            <option value="KR">🇰🇷 เกาหลีใต้</option>
+                            <option value="CN">🇨🇳 จีน</option>
+                            <option value="VN">🇻🇳 เวียดนาม</option>
+                            <option value="ID">🇮🇩 อินโดนีเซีย</option>
+                            <option value="MY">🇲🇾 มาเลเซีย</option>
+                            <option value="SG">🇸🇬 สิงคโปร์</option>
+                            <option value="PH">🇵🇭 ฟิลิปปินส์</option>
+                            <option value="IN">🇮🇳 อินเดีย</option>
+                            <option value="BR">🇧🇷 บราซิล</option>
+                            <option value="DE">🇩🇪 เยอรมนี</option>
+                            <option value="FR">🇫🇷 ฝรั่งเศส</option>
+                            <option value="IT">🇮🇹 อิตาลี</option>
+                            <option value="ES">🇪🇸 สเปน</option>
+                            <option value="RU">🇷🇺 รัสเซีย</option>
+                            <option value="AU">🇦🇺 ออสเตรเลีย</option>
+                            <option value="CA">🇨🇦 แคนาดา</option>
+                        </select>
+                    </div>
+                    <button id="settings-btn" class="btn-small">
+                        <i class="fas fa-cog"></i>
+                    </button>
+                    <div class="user-profile">
+                        <img id="current-profile" class="user-avatar" src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%233b82f6'%3E%3Ccircle cx='12' cy='8' r='4'/%3E%3Cpath d='M12 14c-6 0-8 4-8 4v2h16v-2s-2-4-8-4z'/%3E%3C/svg%3E" alt="Profile">
+                        <span id="current-username"></span>
+                    </div>
+                    <button id="logout-btn" class="btn-small">
+                        <i class="fas fa-sign-out-alt"></i>
+                    </button>
+                </div>
+            </div>
+            
+            <!-- Video Section -->
+            <div class="video-section">
+                <div class="video-container">
+                    <div class="video-wrapper local">
+                        <video id="local-video" autoplay muted playsinline></video>
+                        <div class="video-overlay">
+                            <div class="user-badge">
+                                <img id="local-profile" class="badge-avatar" src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%23667eea'%3E%3Ccircle cx='12' cy='8' r='4'/%3E%3Cpath d='M12 14c-6 0-8 4-8 4v2h16v-2s-2-4-8-4z'/%3E%3C/svg%3E" alt="You">
+                                <span>คุณ</span>
+                            </div>
+                        </div>
+                        <div class="media-status-indicator" id="local-media-status">
+                            <div class="media-status-icon" id="local-camera-status">
+                                <i class="fas fa-video"></i>
+                            </div>
+                            <div class="media-status-icon" id="local-mic-status">
+                                <i class="fas fa-microphone"></i>
+                            </div>
+                        </div>
+                        <div class="video-status local-status">
+                            <span class="status-dot"></span>
+                            <span>ออนไลน์</span>
+                        </div>
+                    </div>
+
+                    <div class="video-wrapper remote">
+                        <video id="remote-video" autoplay playsinline></video>
+                        <div class="video-overlay">
+                            <div class="user-badge" id="partner-badge">
+                                <img id="partner-profile" class="badge-avatar hidden" src="" alt="Partner">
+                                <span id="partner-label">กำลังค้นหา...</span>
+                            </div>
+                        </div>
+                        <div class="media-status-indicator hidden" id="remote-media-status">
+                            <div class="media-status-icon" id="remote-camera-status">
+                                <i class="fas fa-video"></i>
+                            </div>
+                            <div class="media-status-icon" id="remote-mic-status">
+                                <i class="fas fa-microphone"></i>
+                            </div>
+                        </div>
+                        <div class="video-status remote-status hidden" id="remote-status">
+                            <span class="status-dot"></span>
+                            <span>ออนไลน์</span>
+                        </div>
+                        <div class="waiting-overlay" id="waiting-overlay">
+                            <div class="waiting-spinner"></div>
+                            <p>กำลังค้นหาคู่คุย...</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Controls -->
+                <div class="controls">
+                    <button id="find-match-btn" class="btn-primary btn-large">
+                        <i class="fas fa-search"></i>
+                        <span>ค้นหาคู่คุย</span>
+                    </button>
+                    <button id="skip-btn" class="btn-secondary btn-large hidden">
+                        <i class="fas fa-forward"></i>
+                        <span>คนถัดไป</span>
+                    </button>
+                </div>
+
+                <!-- Media Controls -->
+                <div class="media-controls hidden" id="media-controls">
+                    <button id="toggle-camera" class="media-btn active">
+                        <i class="fas fa-video"></i>
+                    </button>
+                    <button id="toggle-mic" class="media-btn active">
+                        <i class="fas fa-microphone"></i>
+                    </button>
+                </div>
+                
+                <div class="status-message" id="status-message"></div>
+            </div>
+            
+            <!-- Chat Box -->
+            <div class="chat-box">
+                <div class="chat-header">
+                    <i class="fas fa-comments"></i>
+                    <span>แชท</span>
+                </div>
+                <div class="chat-messages" id="chat-messages"></div>
+                <div class="chat-input">
+                    <input type="text" id="message-input" placeholder="พิมพ์ข้อความ..." disabled>
+                    <button id="send-message-btn" disabled>
+                        <i class="fas fa-paper-plane"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Settings Modal -->
+    <div id="settings-modal" class="modal hidden">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>ตั้งค่า</h2>
+                <button id="close-settings" class="close-btn">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="setting-group">
+                    <label>
+                        <input type="checkbox" id="auto-match" checked>
+                        <span>ค้นหาคู่คุยอัตโนมัติ</span>
+                    </label>
+                </div>
+                <div class="setting-group">
+                    <label>
+                        <input type="checkbox" id="sound-notifications" checked>
+                        <span>แจ้งเตือนด้วยเสียง</span>
+                    </label>
+                </div>
+                <div class="setting-group">
+                    <label>
+                        <input type="checkbox" id="video-enabled" checked>
+                        <span>เปิดวิดีโอ</span>
+                    </label>
+                </div>
+                <div class="setting-group">
+                    <label>
+                        <input type="checkbox" id="audio-enabled" checked>
+                        <span>เปิดเสียง</span>
+                    </label>
+                </div>
+                <div class="setting-group">
+                    <label>
+                        <span>ภาษา</span>
+                        <select id="language-select">
+                            <option value="th">ไทย</option>
+                            <option value="en">English</option>
+                            <option value="ja">日本語</option>
+                            <option value="ko">한국어</option>
+                            <option value="zh">中文</option>
+                        </select>
+                    </label>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button id="save-settings" class="btn-primary">บันทึก</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="/socket.io/socket.io.js"></script>
+    <script src="app.js"></script>
+</body>
+</html>
